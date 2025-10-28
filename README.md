@@ -1,3 +1,3 @@
-# Wake word model for Pico
-------
-### Link to Pico repository here [repo][https://github.com/colepuls/Pico]
+# Wake word model for Pico project
+
+### Link to Pico repository here: [https://github.com/colepuls/Pico]
