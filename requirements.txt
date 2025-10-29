@@ -2,3 +2,5 @@ sounddevice
 soundfile
 numpy
 dotenv
+torch
+torchaudio
