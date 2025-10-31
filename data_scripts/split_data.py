@@ -8,6 +8,8 @@
 """
 
 from dotenv import load_dotenv
+import soundfile as sf
+import glob
 import os
 
 load_dotenv()
@@ -24,6 +26,22 @@ BACKGROUND_TRAIN_PATH = os.getenv("BACKGROUND_TRAIN_PATH")
 WAKEWORD_VAL_PATH = os.getenv("WAKEWORD_VAL_PATH")
 BACKGROUND_VAL_PATH = os.getenv("BACKGROUND_VAL_PATH")
 
+def load_data(path) -> list:
+    files = glob.glob(f"{path}*.wav")
+    data = []
+
+    for f in files:
+        waveform, sr = sf.read(f)
+        data.append((waveform, sr))
+
+    print(len(data))
+    print(type(data))
+
+    return data
+
 # def split_data():
-    
+
+if __name__ == '__main__':
+    load_data(WAKEWORD_DATA_PATH)
+    load_data(OUTSIDE_DATA_PATH)
 
