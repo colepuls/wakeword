@@ -1,10 +1,10 @@
+from dotenv import load_dotenv
 import sounddevice as sd
 import soundfile as sf
 import numpy as np
 import time
-from dotenv import load_dotenv
-import os
 import sys
+import os
 
 load_dotenv()
 

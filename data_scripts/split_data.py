@@ -1,39 +1,29 @@
-import random
-import shutil
-import glob
-from pathlib import Path
+"""
+- Do a 80/20 split on raw_data for both wakeword data and background data.
+- 80 train, 20 val.
+- train wakeword data into cleaned_data/train/wakeword
+- train background data into cleaned_data/train/background
+- val wakeword data into cleaned_data/val/wakeword
+- val background data into cleaned_data/val/background
+"""
 
-SOURCE = Path("/Users/colepuls/Desktop/projects/wakeword/data_raw")
-DESTINATION = Path("/Users/colepuls/Desktop/projects/wakeword/data")
-VAL_SPLIT = 0.2
-ALLOWED_FILES = {".wav"}
+from dotenv import load_dotenv
+import os
 
-random.seed(42)
+load_dotenv()
 
-def split_data(data_name: str):
-    source_data = SOURCE / data_name
+# Raw data paths
+WAKEWORD_DATA_PATH = os.getenv("WAKEWORD_DATA_PATH")
+OUTSIDE_DATA_PATH = os.getenv("OUTSIDE_DATA_PATH")
 
-    wav_files = [p for p in source_data.rglob("*") if p.is_file() and p.suffix.lower() in ALLOWED_FILES]
+# Train data paths
+WAKEWORD_TRAIN_PATH = os.getenv("WAKEWORD_TRAIN_PATH")
+BACKGROUND_TRAIN_PATH = os.getenv("BACKGROUND_TRAIN_PATH")
 
-    if not wav_files:
-        print("No wav files found.\n")
-        return
+# Val data paths
+WAKEWORD_VAL_PATH = os.getenv("WAKEWORD_VAL_PATH")
+BACKGROUND_VAL_PATH = os.getenv("BACKGROUND_VAL_PATH")
+
+# def split_data():
     
-    random.shuffle(wav_files)
-    total = len(wav_files)
-    val = int(round(total * VAL_SPLIT))
-    val_set = set(wav_files[:val])
 
-    for split in ["train", "val"]:
-        (DESTINATION / split / data_name).mkdir(parents=True, exist_ok=True)
-
-    for w in wav_files:
-        split = "val" if w in val_set else "train"
-        path = DESTINATION / split / data_name / w.name
-        shutil.move(str(w), str(path))
-
-    print(f"{data_name}: total={total}, train={total - val}, val={val}\n")
-
-if __name__ == '__main__':
-    for data in ["wake", "background"]:
-        split_data(data)

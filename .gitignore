@@ -1,5 +1,4 @@
 .venv
 .env
-data_raw
-data
-.DS_Store
+raw_data
+cleaned_data
