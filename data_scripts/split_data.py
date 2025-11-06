@@ -1,6 +1,9 @@
+from torch.utils.data import Dataset, DataLoader
+from torch.nn.utils.rnn import pad_sequence
 from dotenv import load_dotenv
 import soundfile as sf
-import torch, torchaudio
+import torch
+import random
 import glob
 import os
 
@@ -41,26 +44,49 @@ def split_data():
 
     return val_wakeword_data, val_background_data, train_wakeword_data, train_background_data
 
-"""
-Next step is to convert arrays into tensors for RNN using torchaudio.
-"""
+def convert_data(valww, valbg, trainww, trainbg):
+    # Convert each dataset and add labels, wakeword = 1, background = 0
+    valww = [(torch.tensor(w, dtype=torch.float32), 1) for (w, sr) in valww]
+    valbg = [(torch.tensor(w, dtype=torch.float32), 0) for (w, sr) in valbg]
+    trainww = [(torch.tensor(w, dtype=torch.float32), 1) for (w, sr) in trainww]
+    trainbg = [(torch.tensor(w, dtype=torch.float32), 0) for (w, sr) in trainbg]
 
-def convert_data():
-    # Get val and train data
-    val_ww, val_bg, train_ww, train_bg = split_data()
+    # Combine datasets
+    val_data = valww + valbg
+    train_data = trainww + trainbg
 
-    # Convert each dataset
-    val_ww = [(torch.tensor(w, dtype=torch.float32), sr) for (w, sr) in val_ww]
-    val_bg = [(torch.tensor(w, dtype=torch.float32), sr) for (w, sr) in val_bg]
-    train_ww = [(torch.tensor(w, dtype=torch.float32), sr) for (w, sr) in train_ww]
-    train_bg = [(torch.tensor(w, dtype=torch.float32), sr) for (w, sr) in train_bg]
+    # shuffle data
+    random.shuffle(val_data)
+    random.shuffle(train_data)
 
-    return val_ww, val_bg, train_ww, train_bg
+    return val_data, train_data
 
-
-
+class WakewordDataset(Dataset):
+    def __init__(self, data):
+        self.data = data
+    def __len__(self):
+        return len(self.data)
+    def __getitem__(self, idx):
+        waveform, label = self.data[idx]
+        return waveform, torch.tensor(label, dtype=torch.long)
 
 if __name__ == '__main__':
-    val_ww, val_bg, train_ww, train_bg = convert_data()
+    val_ww, val_bg, train_ww, train_bg = split_data()
 
-    print(val_ww[0])
+    val_data, train_data = convert_data(val_ww, val_bg, train_ww, train_bg)
+
+    train_dataset = WakewordDataset(train_data)
+    val_dataset = WakewordDataset(val_data)
+
+    collate = lambda b: (
+        pad_sequence([x for x, _ in b], batch_first=True),
+        torch.tensor([y for _, y in b], dtype=torch.long)
+    )
+
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, collate_fn=collate)
+    val_loader = DataLoader(val_dataset, batch_size=16, collate_fn=collate)
+
+    for targets, labels in train_loader:
+        print(targets)
+        print(labels)
+        break
