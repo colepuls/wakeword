@@ -1,9 +1,9 @@
 # Wake word model for Pico project
 
-## Link to Pico robot repository here: [][https://github.com/colepuls/Pico]
+## Link to Pico robot repository: [https://github.com/colepuls/Pico]
 
 ### To do list
-- [ ] Split dataset to 80/20
+- [x] Split dataset to 80/20
 - [ ] Balance and augment
 - [ ] Choose features
 - [ ] Build dataset interface
