@@ -1,5 +1,6 @@
 from dotenv import load_dotenv; load_dotenv()
 import soundfile as sf, os, glob, torch, random
+import torch.nn.functional as F
 
 # Get data paths
 WAKEWORD_DATA_PATH = os.getenv("WAKEWORD_DATA_PATH")
@@ -24,14 +25,26 @@ for path in background_paths:
 split_ww = int(0.8 * len(wakeword_data))
 train_ww_data = wakeword_data[:split_ww]
 val_ww_data = wakeword_data[split_ww:]
+random.shuffle(train_ww_data); random.shuffle(val_ww_data)
 
 split_bg = int(0.8 * len(background_data))
 train_bg_data = background_data[:split_bg]
 val_bg_data = background_data[split_bg:]
 
+# Balance
 train_data = train_ww_data + train_bg_data
 val_data = val_ww_data + val_bg_data
-random.shuffle(train_data); random.shuffle(val_data)
+
+# Label
+train_labels = [1]*len(train_ww_data) + [0]*len(train_bg_data)
+val_labels = [1]*len(val_ww_data) + [0]*len(val_bg_data)
+
+# Combine and shuffle
+train = list(zip(train_data, train_labels))
+val = list(zip(val_data, val_labels))
+random.shuffle(train); random.shuffle(val)
+
+# Normalize and pad
 
 if __name__ == '__main__':
     print(f"Lenght of wakeword data: {len(wakeword_data)}\n")
