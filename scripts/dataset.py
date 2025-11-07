@@ -2,6 +2,17 @@ from dotenv import load_dotenv; load_dotenv()
 import soundfile as sf, os, glob, torch, random, torchaudio
 import torch.nn.functional as F
 
+"""
+This program gets data from datapaths, then:
+- Splits data to 80/20.
+- Combines all train data together and all val data together.
+- Adds labels.
+- Combines data with labels.
+- Pads data.
+- Converts log-mel spectrogram (prep for RNN).
+- Converts data to features (Ready for RNN feed).
+"""
+
 # Get data paths
 WAKEWORD_DATA_PATH = os.getenv("WAKEWORD_DATA_PATH")
 wakeword_paths = glob.glob(f"{WAKEWORD_DATA_PATH}*.wav")

@@ -1,6 +1,9 @@
 import torch.nn as nn, torch
 
 class WakewordRNN(nn.Module):
+    """
+    Wakeword RNN (GRU) model.
+    """
     def __init__(self):
         super().__init__()
         self.rnn = nn.GRU(input_size=40, hidden_size=64, num_layers=2, batch_first=True)

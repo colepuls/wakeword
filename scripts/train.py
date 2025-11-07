@@ -2,6 +2,10 @@ from dataset import train_feats, val_feats
 from model import WakewordRNN
 import torch.optim as optim, torch.nn as nn, torch, random
 
+"""
+This program trains the model on the .wav data.
+"""
+
 model = WakewordRNN()
 criterion = nn.BCELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
@@ -50,6 +54,6 @@ for epoch in range(EPOCHS):
 
     print(f"Epoch {epoch+1}/{EPOCHS} | loss={avg_loss:.4f} | val_acc={correct/total:.2%}")
 
-# Save model!!! lets go please work
+# Save model!
 torch.save(model.state_dict(), "wakeword_model.pth")
 print("Model saved as wakeword_model.pth\n")

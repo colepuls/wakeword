@@ -2,6 +2,10 @@ from model import WakewordRNN
 import torchaudio, torch, soundfile as sf
 from torchaudio.transforms import MelSpectrogram, AmplitudeToDB
 
+"""
+Quick test for the model.
+"""
+
 # Load model
 model = WakewordRNN()
 model.load_state_dict(torch.load("wakeword_model.pth"))

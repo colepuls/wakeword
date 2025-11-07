@@ -1,19 +1,30 @@
-# Wake word model for Pico project
+# Wakeword model for Pico project
 
-## Link to Pico robot repository: [https://github.com/colepuls/Pico]
+---
 
-### To do list
-- [x] Split dataset to 80/20
-- [ ] Balance and augment
-- [ ] Choose features
-- [ ] Build dataset interface
-- [ ] Define model shape and output
-- [ ] Loss, metrics, thresholds
-- [ ] Training setup
-- [ ] Validate and test
-- [ ] Tune for real use
-- [ ] Prepare deployment features (ONNX)
-- [ ] Streaming interface design (sliding window)
+## Tach stack
+
+<p align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="60"/>
+  <img src="https://pytorch.org/assets/images/pytorch-logo.png" width="70"/>
+</p>
+
+- **Python 3.11**
+- **PyTorch & Torchaudio**
+
+---
+
+## Overview
+
+Made this wakeword model by training a RNN (GRU) on wakeword data (Me saying Pico) and background data.
+
+---
+
+## Link to Pico robot repository where model is used: https://github.com/colepuls/Pico
+
+---
+
+#### Made by Cole Puls
 
 
 

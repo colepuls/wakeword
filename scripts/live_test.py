@@ -4,9 +4,12 @@ import numpy as np
 import sounddevice as sd
 import torch
 import torch.nn.functional as F
-
 from model import WakewordRNN
 from torchaudio.transforms import MelSpectrogram, AmplitudeToDB
+
+"""
+This program tests how the model will work in a real situation.
+"""
 
 SAMPLE_RATE = 16000
 TARGET_LEN = 16000
