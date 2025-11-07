@@ -44,7 +44,24 @@ train = list(zip(train_data, train_labels))
 val = list(zip(val_data, val_labels))
 random.shuffle(train); random.shuffle(val)
 
-# Normalize and pad
+# Pad data
+TARGET_LEN = 16000
+
+pad_train = []
+for x, y in train:
+    if x.numel() < TARGET_LEN:
+        x = F.pad(x, (0, TARGET_LEN - x.numel()))
+    pad_train.append((x, y))
+train = pad_train
+
+pad_val = []
+for x, y in val:
+    if x.numel() < TARGET_LEN:
+        x = F.pad(x, (0, TARGET_LEN - x.numel()))
+    pad_val.append((x, y))
+val = pad_val
+
+print(f"Sample rate: {sample_rate}\n")
 
 if __name__ == '__main__':
     print(f"Lenght of wakeword data: {len(wakeword_data)}\n")
@@ -61,3 +78,9 @@ if __name__ == '__main__':
 
     print(f"Length of TRAIN data: {len(train_data)}\n")
     print(f"Length of VAL data: {len(val_data)}\n")
+
+    for i, (x, y) in enumerate(train[:50]):
+        print(f"train[{i}] shape: {x.shape}, label: {y}\n")
+        
+
+    print(f"Min len: {min(x.numel() for x, _ in train)}, Max len: {max(x.numel() for x, _ in train)}\n")
