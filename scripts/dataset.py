@@ -1,5 +1,5 @@
 from dotenv import load_dotenv; load_dotenv()
-import soundfile as sf, os, glob, torch, random
+import soundfile as sf, os, glob, torch, random, torchaudio
 import torch.nn.functional as F
 
 # Get data paths
@@ -61,9 +61,24 @@ for x, y in val:
     pad_val.append((x, y))
 val = pad_val
 
-print(f"Sample rate: {sample_rate}\n")
+# Convert audio to log-mel spectrogram for feeding into RNN
+mel_transform = torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_fft=400, hop_length=160, n_mels=40)
+db_transform = torchaudio.transforms.AmplitudeToDB()
+
+def get_features(dataset):
+    feats = []
+    for x, y in dataset:
+        mel = mel_transform(x)
+        mel_db = db_transform(mel)
+        feats.append((mel_db, y))
+    return feats
+
+train_feats = get_features(train)
+val_feats = get_features(val)
 
 if __name__ == '__main__':
+    print(f"Sample rate: {sample_rate}\n")
+
     print(f"Lenght of wakeword data: {len(wakeword_data)}\n")
     print(f"Example idx of wakeword data: {wakeword_data[0]}\n")
 
@@ -82,5 +97,6 @@ if __name__ == '__main__':
     for i, (x, y) in enumerate(train[:50]):
         print(f"train[{i}] shape: {x.shape}, label: {y}\n")
         
-
     print(f"Min len: {min(x.numel() for x, _ in train)}, Max len: {max(x.numel() for x, _ in train)}\n")
+
+    print(train_feats[0][0].shape, train_feats[0][1])
